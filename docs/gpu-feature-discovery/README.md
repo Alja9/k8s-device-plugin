@@ -285,9 +285,14 @@ Reading the wrong one is a common source of confusion, so each question maps to 
 
 | If you want to know                             | Read                                | Example |
 | ----------------------------------------------- | ----------------------------------- | ------- |
-| How many physical GPUs are installed            | `nvidia.com/gpu.count`              | 8       |
+| Physical GPU count (single-model nodes)         | `nvidia.com/gpu.count`              | 8       |
 | How many GPUs remain usable as whole GPUs       | `nvidia.com/gpu.count.mig-disabled` | 1       |
 | How many instances of a given MIG profile exist | `nvidia.com/mig-<profile>.count`    | 14      |
+
+> [!NOTE]
+> These counts assume all GPUs on the node are the same model. On nodes with multiple GPU models,
+> `nvidia.com/gpu.count` reflects the count for only one model, while
+> `nvidia.com/gpu.count.mig-disabled` counts MIG-disabled GPUs across all models.
 
 For example, on a node with 8 GPUs where 7 have been partitioned and 1 has been left whole:
 
@@ -308,7 +313,7 @@ the example above, even though 8 GPUs are installed.
 > [!NOTE]
 > `nvidia.com/gpu.count.mig-disabled` is only generated for `mig.strategy=mixed`. It is not needed
 > for the other strategies: `single` requires every GPU on the node to share the same MIG state, so
-> the value would always be either `0` or `nvidia.com/gpu.count`, and `none` does not exclude
+> the value would always be either `0` or the total number of physical GPUs, and `none` does not exclude
 > MIG-enabled GPUs from the `nvidia.com/gpu` resource at all.
 
 ## Deployment via `helm`

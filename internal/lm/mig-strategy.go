@@ -78,8 +78,10 @@ func NewResourceLabeler(manager resource.Manager, config *spec.Config) (Labeler,
 
 }
 
-// newMigDisabledCountLabeler creates a labeler that reports the number of GPUs on the node that
-// do not have MIG enabled, the GPUs still usable as whole GPUs.
+// newMigDisabledCountLabeler reports how many GPUs have MIG disabled. Under the mixed
+// strategy nvidia.com/gpu.count stays the physical GPU count, but MIG-enabled GPUs are
+// excluded from the nvidia.com/gpu resource. Without this label, users can't tell how
+// many whole GPUs are actually schedulable.
 func newMigDisabledCountLabeler(deviceInfo *mig.DeviceInfo) (Labeler, error) {
 	migDisabledDevices, err := deviceInfo.GetDevicesWithMigDisabled()
 	if err != nil {
